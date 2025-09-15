@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tri?u trái tim roi</title>
+<style>
+  html,body{margin:0;height:100%;background:#0a0f1a;overflow:hidden;}
+  canvas{position:absolute;top:0;left:0;width:100%;height:100%;}
+</style>
+</head>
+<body>
+<canvas id="layer1"></canvas>
+<canvas id="layer2"></canvas>
+<canvas id="layer3"></canvas>
+
+<script>
+function createLayer(id, particleCount, size, speed, opacity){
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext("2d");
+  let W,H;
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+  }
+  resize(); window.addEventListener("resize", resize);
+
+  function heartPath(ctx,x,y,s){
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.bezierCurveTo(x,y-3*s,x-5*s,y-15*s,x-15*s,y-15*s);
+    ctx.bezierCurveTo(x-35*s,y-15*s,x-35*s,y+10*s,x-35*s,y+10*s);
+    ctx.bezierCurveTo(x-35*s,y+25*s,x-20*s,y+40*s,x,y+55*s);
+    ctx.bezierCurveTo(x+20*s,y+40*s,x+35*s,y+25*s,x+35*s,y+10*s);
+    ctx.bezierCurveTo(x+35*s,y+10*s,x+35*s,y-15*s,x+15*s,y-15*s);
+    ctx.bezierCurveTo(x+5*s,y-15*s,x,y-3*s,x,y);
+    ctx.closePath();
+  }
+
+  let hearts=[];
+  for(let i=0;i<particleCount;i++){
+    hearts.push({
+      x:Math.random()*W,
+      y:Math.random()*H,
+      r:size*(0.5+Math.random()),
+      s:speed*(0.5+Math.random()),
+      a:opacity*(0.5+Math.random())
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    hearts.forEach(h=>{
+      h.y+=h.s;
+      if(h.y>H+50) h.y=-10;
+      ctx.save();
+      ctx.translate(h.x,h.y);
+      ctx.scale(h.r/10,h.r/10);
+      ctx.globalAlpha=h.a;
+      ctx.fillStyle="rgb(255,100,150)";
+      heartPath(ctx,0,0,1);
+      ctx.fill();
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+createLayer("layer1",400,"8",0.8,0.4);   // xa xa, nh?, m?
+createLayer("layer2",1000,"12",1.2,0.7); // trung bình
+createLayer("layer3",2000,"18",1.6,1.0); // g?n, rõ nh?t
+</script>
+</body>
+</html>
